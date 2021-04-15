@@ -1,10 +1,10 @@
-%pkg load signal % Octave only, comment out for Matlab
+pkg load signal % Octave only, comment out for Matlab
 wp = 40/100;
 ws = 60/100;
 rp = 1;
 rs = 100;
 t = 0:0.005:1;
-Fs = 200;
+Fs = 250
 
 sig = cos(30*2*pi*t) + cos(40*2*pi*t);
 noise = cos(100*2*pi*t);
@@ -33,6 +33,7 @@ freqz(b, a)
 title('Butter')
 saveas(gcf, 'Butter_response.jpg')
 yb = filter(b, a, total_d);
+figure;
 stem(n1, yb)
 title('Butterworth Filtered Discrete')
 saveas(gcf, 'butter_filtered.jpg')
@@ -43,6 +44,7 @@ figure;
 freqz(bc, ac)
 title('cheby1')
 saveas(gcf, 'cheby1_response.jpg')
+figure;
 yc1 = filter(bc, ac, total_d);
 stem(n1, yc1)
 title('Cheby1 filtered')
@@ -54,6 +56,7 @@ figure;
 freqz(bc2, ac2)
 title('cheby2')
 saveas(gcf, 'cheby2_response.jpg')
+figure;
 yc2 = filter(bc2, ac2, total_d);
 stem(n1, yc2)
 title('Cheby2 filtered')
@@ -65,6 +68,7 @@ figure;
 freqz(be, ae)
 title('ellipse')
 saveas(gcf, 'ellipse_response.jpg')
+figure;
 ye = filter(be, ae, total_d);
 stem(n1, yc1)
 title('Ellipse filtered')
