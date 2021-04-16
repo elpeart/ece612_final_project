@@ -1,6 +1,6 @@
 pkg load signal % Octave only, comment out for Matlab
-wp = 90/100;
-ws = 95/100;
+wp = 95/100;
+ws = 99/100;
 rp = 1;
 rs = 100;
 t = 0:0.005:1;
