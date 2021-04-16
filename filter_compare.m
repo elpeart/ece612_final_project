@@ -4,7 +4,7 @@ ws = 60/100;
 rp = 1;
 rs = 100;
 t = 0:0.005:1;
-Fs = 250
+Fs = 200;
 
 sig = cos(30*2*pi*t) + cos(40*2*pi*t);
 noise = cos(100*2*pi*t);
@@ -18,8 +18,8 @@ plot(t, total)
 title('Signal plus Noise')
 saveas(gcf, 'with_noise.jpg')
 
-n1 = t*Fs;
-total_d = cos(30*2*pi*n1) + cos(40*2*pi*n1) + cos(100*2*pi*n1);
+n1 = 0:length(t)-1;
+total_d = cos(30*2*pi*n1/Fs) + cos(40*2*pi*n1/Fs) + cos(100*2*pi*n1/Fs);
 figure;
 stem(n1, total_d)
 title('Sampled Signal')
