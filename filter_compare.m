@@ -1,25 +1,25 @@
-pkg load signal % Octave only, comment out for Matlab
-wp = 95/100;
-ws = 99/100;
+%pkg load signal % Octave only, comment out for Matlab
+wp = 50/100;
+ws = 60/100;
 rp = 1;
 rs = 100;
 t = 0:0.005:1;
 Fs = 200;
 
-sig = cos(30*2*pi*t) + cos(40*2*pi*t);
-noise = cos(100*2*pi*t);
+sig = cos(20*2*pi*t) + cos(30*2*pi*t) + cos(40*2*pi*t);
+noise = cos(100*2*pi*t) + cos(60*2*pi*t);
 figure;
 plot(t, sig)
 title('Original Signal')
 saveas(gcf, 'original.jpg')
-total = sig;% + noise;
+total = sig + noise;
 figure;
 plot(t, total)
 title('Signal plus Noise')
 saveas(gcf, 'with_noise.jpg')
 
 n1 = 0:length(t)-1;
-total_d = cos(30*2*pi*n1/Fs) + cos(40*2*pi*n1/Fs) + cos(100*2*pi*n1/Fs);
+total_d = cos(20*2*pi*n1/Fs) + cos(30*2*pi*n1/Fs) + cos(40*2*pi*n1/Fs) + cos(100*2*pi*n1/Fs) + cos(60*2*pi*n1/Fs);
 figure;
 stem(n1, total_d)
 title('Sampled Signal')
