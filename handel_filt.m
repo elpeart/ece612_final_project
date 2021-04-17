@@ -1,11 +1,18 @@
 load handel.mat
-plot(y)
+t = 0:1/Fs:(length(y) - 1)/Fs;
+plot(t, y)
+xlabel('Time (seconds)')
+ylabel('Magnitude')
 title('Handel Signal')
 saveas(gcf, 'Handel.jpg')
+
 figure;
 Y = fft(y);
-plot(abs(Y))
+omega = linspace(0, 2, length(y));
+plot(omega, abs(Y))
 title('Handel FFT')
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
 saveas(gcf, 'Handel_fft.jpg')
 audiowrite('Handel.wav', y, Fs)
 %sound(y, Fs)
@@ -16,18 +23,24 @@ figure;
 
 noise  = 1/10 * wgn(length(y), 1, 1);
 n_fft = abs(fft(noise));
-plot(n_fft)
+plot(omega, n_fft)
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
 title('FFT of Noise');
 saveas(gcf, 'noise_fft.jpg')
 
 noisy = y + noise;
 ny_fft = abs(fft(noisy));
 figure;
-plot(noisy)
+plot(t, noisy)
+xlabel('Time (seconds)')
+ylabel('Magnitude')
 title('Noisy Signal');
 saveas(gcf, 'noisy.jpg')
 figure;
-plot(ny_fft)
+plot(omega, ny_fft)
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
 title('FFT of noisy signal')
 saveas(gcf, 'noisy_fft.jpg')
 %sound(noisy, Fs)
@@ -49,12 +62,16 @@ yb = filtfilt(b, a, noisy);
 butt_err = mean(abs(yb - y))/mean(abs(y));
 fprintf('Error after Butterworth Filtering: %4.4f\n', butt_err)
 figure;
-plot(yb)
+plot(t, yb)
+xlabel('Time (seconds)')
+ylabel('Magnitude')
 title('Butterworth Filtered Signal')
 saveas(gcf, 'handel_butter.jpg')
 yb_fft = abs(fft(yb));
 figure;
-plot(yb_fft)
+plot(omega, yb_fft)
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
 title('FFT of Butterworth Filtered Signal')
 saveas(gcf, 'handel_butter_fft.jpg')
 audiowrite('Handel_butter.wav', yb, Fs)
@@ -67,12 +84,16 @@ yc1 = filtfilt(bc, ac, noisy);
 c1_err = mean(abs(yc1 - y))/mean(abs(y));
 fprintf('Error after Chebyshev Type I Filtering: %4.4f\n', c1_err)
 figure;
-plot(yc1)
+plot(t, yc1)
+xlabel('Time (seconds)')
+ylabel('Magnitude')
 title('Chebyshev Type I Filtered Signal')
 saveas(gcf, 'handel_cheby1.jpg')
 yc1_fft = abs(fft(yc1));
 figure;
-plot(yc1_fft)
+plot(omega, yc1_fft)
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
 title('FFT of Chebyshev Type I Filtered Signal')
 saveas(gcf, 'handel_cheby1_fft.jpg')
 %sound(yc1, Fs)
@@ -85,12 +106,16 @@ yc2 = filtfilt(bc2, ac2, noisy);
 c2_err = mean(abs(yc2 - y))/mean(abs(y));
 fprintf('Error after Chebyshev Type II Filtering: %4.4f\n', c2_err)
 figure;
-plot(yc2)
+plot(t, yc2)
+xlabel('Time (seconds)')
+ylabel('Magnitude')
 title('Chebyshev Type II Filtered Signal')
 saveas(gcf, 'handel_cheby2.jpg')
 yc2_fft = abs(fft(yc2));
 figure;
-plot(yc2_fft)
+plot(omega, yc2_fft)
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
 title('FFT of Chebyshev Type II Filtered Signal')
 saveas(gcf, 'handel_cheby2_fft.jpg')
 %sound(yc2, Fs)
@@ -103,18 +128,131 @@ ye = filtfilt(be, ae, noisy);
 e_err = mean(abs(ye - y))/mean(abs(y));
 fprintf('Error after Elliptic Filtering: %4.4f\n', e_err)
 figure;
-plot(ye)
+plot(t, ye)
+xlabel('Time (seconds)')
+ylabel('Magnitude')
 title('Ellipse Filtered Signal')
 saveas(gcf, 'handel_ellipse.jpg')
 ye_fft = abs(fft(ye));
 figure;
-plot(ye_fft)
+plot(omega, ye_fft)
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
 title('Ellipse Filtered Signal')
 saveas(gcf, 'handel_Ellipse_fft.jpg')
 sound(ye, Fs)
 audiowrite('Handel_ellipse.wav', ye, Fs)
 
+fb = Wn * pi * Fs;
+[bbc, abc] = butter(9, fb, 's');
+[bbz, abz] = impinvar(bbc, abc, Fs);
+figure;
+freqz(bbz, abz)
+title('Butter Impinvar')
+saveas(gcf, 'Butter_response_impinvar.jpg')
+ybz = filtfilt(bbz, abz, noisy);
+% figure;
+% stem(n1, ybz)
+% title('Butterworth Filtered Discrete impinvar')
+% saveas(gcf, 'butter_filtered_impinvar.jpg')
+but_erri = mean(abs(y - ybz) / mean(abs(y)));
+fprintf('Butterworth Filter Error using impinvar: %4.4f\n', but_erri);
+figure;
+plot(t, ybz)
+title('Butterworth impinvar')
+xlabel('Time (seconds)')
+ylabel('Magnitude')
+saveas(gcf, 'Handel_but_impinvar.jpg')
+figure;
+plot(omega, abs(fft(ybz)))
+title('FFT of Butterworth filtered signal using impinvar')
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
+saveas(gcf, 'Handel_butt_impinvar_fft.jpg')
+audiowrite('Handel_butt_impinvar.wav', ybz, Fs)
 
+fc1 = Wnc * pi * Fs;
+[bc1c, ac1c] = cheby1(nc, rp, fc1, 's');
+[bc1z, ac1z] = impinvar(bc1c, ac1c, Fs);
+figure;
+freqz(bc1z, ac1z)
+title('Chebyshev I Impinvar')
+saveas(gcf, 'cheby1_response_impinvar.jpg')
+yc1z = filtfilt(bc1z, ac1z, noisy);
+% figure;
+% stem(n1, yc1z)
+% title('Chebyshev I Filtered Discrete impinvar')
+% saveas(gcf, 'cheby1_filtered_impinvar.jpg')
+c1_erri = mean(abs(y - yc1z) / mean(abs(y)));
+fprintf('Chebyshev I Filter Error using impinvar: %4.4f\n', c1_erri);
+figure;
+plot(t, yc1z)
+xlabel('Time (seconds)')
+ylabel('Magnitude')
+title('Chebyshev I impinvar')
+saveas(gcf, 'Handel_cheby1_impinvar.jpg')
+figure;
+plot(omega, abs(fft(yc1z)))
+title('FFT of Chebyshev I filtered signal using impinvar')
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
+saveas(gcf, 'Handel_cheby1_impinvar_fft.jpg')
+audiowrite('Handel_cheby1_impinvar.wav', yc1z, Fs)
 
+fc2 = Wnc2 * pi * Fs;
+[bc2c, ac2c] = cheby2(9, rs, fc2, 's');
+[bc2z, ac2z] = impinvar(bc2c, ac2c, Fs);
+figure;
+freqz(bc2z, ac2z)
+title('Chebyshev II Impinvar')
+saveas(gcf, 'cheby2_response_impinvar.jpg')
+yc2z = filtfilt(bc2z, ac2z, noisy);
+% figure;
+% stem(n1, yc2z)
+% title('Chebyshev II Filtered Discrete impinvar')
+% saveas(gcf, 'cheby2_filtered_impinvar.jpg')
+c2_erri = mean(abs(y - yc2z) / mean(abs(y)));
+fprintf('Chebyshev II Filter Error using impinvar: %4.4f\n', c2_erri);
+figure;
+plot(t, yc2z)
+xlabel('Time (seconds)')
+ylabel('Magnitude')
+title('Chebyshev II Continuous impinvar')
+saveas(gcf, 'Handel_cheby2_impinvar.jpg')
+figure;
+plot(omega, abs(fft(yc2z)))
+title('FFT of Chebyshev II filtered signal using impinvar')
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
+saveas(gcf, 'Handel_cheby2_impinvar_fft.jpg')
+audiowrite('Handel_cheby2_impinvar.wav', yc2, Fs)
+
+fe = Wne * pi * Fs;
+[bec, aec] = ellip(ne, rp, rs, fe, 's');
+[bez, aez] = impinvar(bec, aec, Fs);
+figure;
+freqz(bez, aez)
+title('Ellipse Impinvar')
+saveas(gcf, 'ellipse_response_impinvar.jpg')
+yez = filtfilt(bez, aez, noisy);
+% figure;
+% stem(n1, yez)
+% title('Ellipse Filtered Discrete impinvar')
+% saveas(gcf, 'Handel_ellipse_filtered_impinvar.jpg')
+e_erri = mean(abs(y - yez) / mean(abs(y)));
+fprintf('Ellipse Filter Error using impinvar: %4.4f\n', e_erri);
+figure;
+plot(t, yez)
+xlabel('Time (seconds)')
+ylabel('Magnitude')
+title('Ellipse impinvar')
+saveas(gcf, 'Handel_ellipse_impinvar.jpg')
+figure;
+plot(omega, abs(fft(yez)))
+title('FFT of Elipse filtered signal using impinvar')
+xlabel('Normalized Frequency (x \pi rads/sample)')
+ylabel('Magnitude')
+saveas(gcf, 'Handel_ellipse_impinvar_fft.jpg')
+audiowrite('Handel_ellipse_impinvar.wav', yez, Fs)
 
 
