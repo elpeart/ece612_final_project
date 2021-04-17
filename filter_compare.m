@@ -32,7 +32,7 @@ figure;
 freqz(b, a)
 title('Butter')
 saveas(gcf, 'Butter_response.jpg')
-yb = filter(b, a, total_d);
+yb = filtfilt(b, a, total_d);
 figure;
 stem(n1, yb)
 title('Butterworth Filtered Discrete')
@@ -51,7 +51,7 @@ freqz(bc, ac)
 title('cheby1')
 saveas(gcf, 'cheby1_response.jpg')
 figure;
-yc1 = filter(bc, ac, total_d);
+yc1 = filtfilt(bc, ac, total_d);
 stem(n1, yc1)
 title('Cheby1 filtered')
 saveas(gcf, 'cheby1_filt.jpg')
@@ -63,13 +63,13 @@ title('Chebyshev I continuous')
 saveas(gcf, 'cheby1_cont.jpg')
 
 [nc2, Wnc2] = cheb2ord(wp, ws, rp, rs);
-[bc2, ac2] = cheby1(nc2, rs, Wnc2);
+[bc2, ac2] = cheby2(nc2, rs, Wnc2);
 figure;
 freqz(bc2, ac2)
 title('cheby2')
 saveas(gcf, 'cheby2_response.jpg')
 figure;
-yc2 = filter(bc2, ac2, total_d);
+yc2 = filtfilt(bc2, ac2, total_d);
 stem(n1, yc2)
 title('Cheby2 filtered')
 saveas(gcf, 'cheby2_filt.jpg')
@@ -87,7 +87,7 @@ freqz(be, ae)
 title('ellipse')
 saveas(gcf, 'ellipse_response.jpg')
 figure;
-ye = filter(be, ae, total_d);
+ye = filtfilt(be, ae, total_d);
 stem(n1, ye)
 title('Ellipse filtered')
 saveas(gcf, 'ellipse_filt.jpg')
@@ -97,3 +97,79 @@ figure;
 plot(t, ye)
 title('Ellipse continuous')
 saveas(gcf, 'e_cont.jpg')
+
+fb = Wn * pi * Fs;
+[bbc, abc] = butter(9, fb, 's');
+[bbz, abz] = impinvar(bbc, abc, Fs);
+figure;
+freqz(bbz, abz)
+title('Butter Impinvar')
+saveas(gcf, 'Butter_response_impinvar.jpg')
+ybz = filtfilt(bbz, abz, total_d);
+figure;
+stem(n1, ybz)
+title('Butterworth Filtered Discrete impinvar')
+saveas(gcf, 'butter_filtered_impinvar.jpg')
+but_erri = mean(abs(sig - ybz) / mean(abs(sig)));
+fprintf('Butterworth Filter Error using impinvar: %4.4f\n', but_erri);
+figure;
+plot(t, ybz)
+title('Butterworth Continuous impinvar')
+saveas(gcf, 'but_cont_impinvar.jpg')
+
+fc1 = Wnc * pi * Fs;
+[bc1c, ac1c] = cheby1(nc, rp, fc1, 's');
+[bc1z, ac1z] = impinvar(bc1c, ac1c, Fs);
+figure;
+freqz(bc1z, ac1z)
+title('Chebyshev I Impinvar')
+saveas(gcf, 'cheby1_response_impinvar.jpg')
+yc1z = filtfilt(bc1z, ac1z, total_d);
+figure;
+stem(n1, yc1z)
+title('Chebyshev I Filtered Discrete impinvar')
+saveas(gcf, 'cheby1_filtered_impinvar.jpg')
+c1_erri = mean(abs(sig - yc1z) / mean(abs(sig)));
+fprintf('Chebyshev I Filter Error using impinvar: %4.4f\n', c1_erri);
+figure;
+plot(t, yc1z)
+title('Chebyshev I Continuous impinvar')
+saveas(gcf, 'cheby1_cont_impinvar.jpg')
+
+fc2 = Wnc2 * pi * Fs;
+[bc2c, ac2c] = cheby2(9, rs, fc2, 's');
+[bc2z, ac2z] = impinvar(bc2c, ac2c, Fs);
+figure;
+freqz(bc2z, ac2z)
+title('Chebyshev II Impinvar')
+saveas(gcf, 'cheby2_response_impinvar.jpg')
+yc2z = filtfilt(bc2z, ac2z, total_d);
+figure;
+stem(n1, yc2z)
+title('Chebyshev II Filtered Discrete impinvar')
+saveas(gcf, 'cheby2_filtered_impinvar.jpg')
+c2_erri = mean(abs(sig - yc2z) / mean(abs(sig)));
+fprintf('Chebyshev II Filter Error using impinvar: %4.4f\n', c2_erri);
+figure;
+plot(t, yc2z)
+title('Chebyshev II Continuous impinvar')
+saveas(gcf, 'cheby2_cont_impinvar.jpg')
+
+fe = Wne * pi * Fs;
+[bec, aec] = ellip(ne, rp, rs, fe, 's');
+[bez, aez] = impinvar(bec, aec, Fs);
+figure;
+freqz(bez, aez)
+title('Ellipse Impinvar')
+saveas(gcf, 'ellipse_response_impinvar.jpg')
+yez = filtfilt(bez, aez, total_d);
+figure;
+stem(n1, yez)
+title('Ellipse Filtered Discrete impinvar')
+saveas(gcf, 'ellipse_filtered_impinvar.jpg')
+e_erri = mean(abs(sig - yez) / mean(abs(sig)));
+fprintf('Ellipse Filter Error using impinvar: %4.4f\n', e_erri);
+figure;
+plot(t, yez)
+title('Ellipse Continuous impinvar')
+saveas(gcf, 'ellipse_cont_impinvar.jpg')
