@@ -35,8 +35,8 @@ title('FFT of noisy signal')
 saveas(gcf, 'noisy_fft.jpg')
 %sound(noisy, Fs)
 
-wp = 50/100;
-ws = 60/100;
+wp = .5;
+ws = .6;
 rp = 1;
 rs = 100;
 [n, Wn] = buttord(wp, ws, rp, rs);
