@@ -7,7 +7,7 @@ t = 0:0.005:1;
 Fs = 200;
 
 sig = cos(20*2*pi*t) + cos(30*2*pi*t) + cos(40*2*pi*t);
-noise = cos(100*2*pi*t) + cos(60*2*pi*t);
+noise = cos(100*2*pi*t) + cos(80*2*pi*t);
 figure;
 plot(t, sig)
 title('Original Signal')
@@ -19,7 +19,7 @@ title('Signal plus Noise')
 saveas(gcf, 'with_noise.jpg')
 
 n1 = 0:length(t)-1;
-total_d = cos(20*2*pi*n1/Fs) + cos(30*2*pi*n1/Fs) + cos(40*2*pi*n1/Fs) + cos(100*2*pi*n1/Fs) + cos(60*2*pi*n1/Fs);
+total_d = cos(20*2*pi*n1/Fs) + cos(30*2*pi*n1/Fs) + cos(40*2*pi*n1/Fs) + cos(100*2*pi*n1/Fs) + cos(80*2*pi*n1/Fs);
 figure;
 stem(n1, total_d)
 title('Sampled Signal')
