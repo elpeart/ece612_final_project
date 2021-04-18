@@ -1,7 +1,9 @@
 *.asv
 *.jpg
 *#*
-*~
+*~*
 *.fig
 *.odg
 *.wav
+*.pptx
+*.docx

@@ -43,7 +43,7 @@ xlabel('Normalized Frequency (x \pi rads/sample)')
 ylabel('Magnitude')
 title('FFT of noisy signal')
 saveas(gcf, 'noisy_fft.jpg')
-%sound(noisy, Fs)
+sound(noisy, Fs)
 audiowrite('Handel_noisy.wav', noisy, Fs)
 noise_err = mean(abs(noise))/mean(abs(y));
 fprintf('Error from original signal to noisy signal: %4.4f\n', noise_err)
@@ -140,7 +140,7 @@ xlabel('Normalized Frequency (x \pi rads/sample)')
 ylabel('Magnitude')
 title('Ellipse Filtered Signal')
 saveas(gcf, 'handel_Ellipse_fft.jpg')
-sound(ye, Fs)
+%sound(ye, Fs)
 audiowrite('Handel_ellipse.wav', ye, Fs)
 
 fb = Wn * pi * Fs;
