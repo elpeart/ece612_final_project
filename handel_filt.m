@@ -200,7 +200,7 @@ saveas(gcf, 'Handel_cheby1_impinvar_fft.jpg')
 audiowrite('Handel_cheby1_impinvar.wav', yc1z, Fs)
 
 fc2 = Wnc2 * pi * Fs;
-[bc2c, ac2c] = cheby2(9, rs, fc2, 's');
+[bc2c, ac2c] = cheby2(nc2, rs, fc2, 's');
 [bc2z, ac2z] = impinvar(bc2c, ac2c, Fs);
 figure;
 freqz(bc2z, ac2z)
