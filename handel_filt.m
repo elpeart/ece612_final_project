@@ -153,7 +153,7 @@ saveas(gcf, 'handel_Ellipse_fft.jpg')
 audiowrite('Handel_ellipse.wav', ye, Fs)
 
 fb = Wn * pi * Fs;
-[bbc, abc] = butter(9, fb, 's');
+[bbc, abc] = butter(n, fb, 's');
 [bbz, abz] = impinvar(bbc, abc, Fs);
 figure;
 freqz(bbz, abz)
