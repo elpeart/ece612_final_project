@@ -51,12 +51,12 @@ fprintf('Error from original signal to noisy signal: %4.4f\n', noise_err)
 wp = .5;
 ws = .6;
 rp = 1;
-rs = 100;
+rs = 60;
 [n, Wn] = buttord(wp, ws, rp, rs);
 [b, a] = butter(n, Wn);
 figure;
 freqz(b, a)
-title('Butter')
+title('Butterworth Filter Response')
 saveas(gcf, 'Butter_response.jpg')
 yb = filtfilt(b, a, noisy);
 butt_err = mean(abs(yb - y))/mean(abs(y));
@@ -79,7 +79,10 @@ audiowrite('Handel_butter.wav', yb, Fs)
 
 [nc, Wnc] = cheb1ord(wp, ws, rp, rs);
 [bc, ac] = cheby1(nc, rp, Wnc);
-
+figure;
+freqz(bc, ac)
+title('Chebyshev Type I Filter Response')
+saveas(gcf, 'cheby1_response.jpg')
 yc1 = filtfilt(bc, ac, noisy);
 c1_err = mean(abs(yc1 - y))/mean(abs(y));
 fprintf('Error after Chebyshev Type I Filtering: %4.4f\n', c1_err)
@@ -101,7 +104,10 @@ audiowrite('Handel_cheby1.wav', yc1, Fs)
 
 [nc2, Wnc2] = cheb2ord(wp, ws, rp, rs);
 [bc2, ac2] = cheby2(nc2, rs, Wnc2);
-
+figure;
+freqz(bc2, ac2)
+title('Chebyshev Type II Filter Response')
+saveas(gcf, 'cheby2_response.jpg')
 yc2 = filtfilt(bc2, ac2, noisy);
 c2_err = mean(abs(yc2 - y))/mean(abs(y));
 fprintf('Error after Chebyshev Type II Filtering: %4.4f\n', c2_err)
@@ -123,7 +129,10 @@ audiowrite('Handel_cheby2.wav', yc2, Fs)
 
 [ne, Wne] = ellipord(wp, ws, rp, rs);
 [be, ae] = ellip(ne, rp, rs, Wne);
-
+figure;
+freqz(be, ae)
+title('Ellipse Filter Response')
+saveas(gcf, 'ellipse_response.jpg')
 ye = filtfilt(be, ae, noisy);
 e_err = mean(abs(ye - y))/mean(abs(y));
 fprintf('Error after Elliptic Filtering: %4.4f\n', e_err)
