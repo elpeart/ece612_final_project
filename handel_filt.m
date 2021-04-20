@@ -226,7 +226,7 @@ figure;
 plot(t, yc2z)
 xlabel('Time (seconds)')
 ylabel('Magnitude')
-title('Chebyshev II Continuous impinvar')
+title('Chebyshev II Filtered impinvar')
 saveas(gcf, 'Handel_cheby2_impinvar.jpg')
 figure;
 plot(omega, abs(fft(yc2z)))
