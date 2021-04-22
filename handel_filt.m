@@ -1,5 +1,6 @@
-load handel.mat
-t = 0:1/Fs:(length(y) - 1)/Fs;
+% ECE 612 Final Project
+load handel.mat % load signal
+t = 0:1/Fs:(length(y) - 1)/Fs; % for plotting
 plot(t, y)
 xlabel('Time (seconds)')
 ylabel('Magnitude')
@@ -17,10 +18,8 @@ saveas(gcf, 'Handel_fft.jpg')
 audiowrite('Handel.wav', y, Fs)
 %sound(y, Fs)
 
-% n = 1:length(y);
-% n = n';
 figure;
-
+% add noise
 noise  = 1/10 * wgn(length(y), 1, 1);
 n_fft = abs(fft(noise));
 plot(omega, n_fft)
@@ -47,7 +46,8 @@ saveas(gcf, 'noisy_fft.jpg')
 audiowrite('Handel_noisy.wav', noisy, Fs)
 noise_err = mean(abs(noise))/mean(abs(y));
 fprintf('Error from original signal to noisy signal: %4.4f\n', noise_err)
-
+% first bilinear using built ins
+% Butterworth
 wp = .5;
 ws = .6;
 rp = 1;
@@ -77,6 +77,7 @@ saveas(gcf, 'handel_butter_fft.jpg')
 audiowrite('Handel_butter.wav', yb, Fs)
 %sound(yb, Fs)
 
+% Cheby1
 [nc, Wnc] = cheb1ord(wp, ws, rp, rs);
 [bc, ac] = cheby1(nc, rp, Wnc);
 figure;
@@ -102,6 +103,7 @@ saveas(gcf, 'handel_cheby1_fft.jpg')
 %sound(yc1, Fs)
 audiowrite('Handel_cheby1.wav', yc1, Fs)
 
+% Cheby2
 [nc2, Wnc2] = cheb2ord(wp, ws, rp, rs);
 [bc2, ac2] = cheby2(nc2, rs, Wnc2);
 figure;
@@ -127,6 +129,7 @@ saveas(gcf, 'handel_cheby2_fft.jpg')
 %sound(yc2, Fs)
 audiowrite('Handel_cheby2.wav', yc2, Fs)
 
+% Ellipse
 [ne, Wne] = ellipord(wp, ws, rp, rs);
 [be, ae] = ellip(ne, rp, rs, Wne);
 figure;
@@ -152,6 +155,8 @@ saveas(gcf, 'handel_Ellipse_fft.jpg')
 %sound(ye, Fs)
 audiowrite('Handel_ellipse.wav', ye, Fs)
 
+% Impulse invariance
+% Butterworth
 fb = Wn * pi * Fs;
 [bbc, abc] = butter(n, fb, 's');
 [bbz, abz] = impinvar(bbc, abc, Fs);
@@ -160,10 +165,6 @@ freqz(bbz, abz)
 title('Butter Impinvar')
 saveas(gcf, 'Butter_response_impinvar.jpg')
 ybz = filtfilt(bbz, abz, noisy);
-% figure;
-% stem(n1, ybz)
-% title('Butterworth Filtered Discrete impinvar')
-% saveas(gcf, 'butter_filtered_impinvar.jpg')
 but_erri = mean(abs(y - ybz) / mean(abs(y)));
 fprintf('Butterworth Filter Error using impinvar: %4.4f\n', but_erri);
 figure;
@@ -180,6 +181,7 @@ ylabel('Magnitude')
 saveas(gcf, 'Handel_butt_impinvar_fft.jpg')
 audiowrite('Handel_butt_impinvar.wav', ybz, Fs)
 
+% Cheby1
 fc1 = Wnc * pi * Fs;
 [bc1c, ac1c] = cheby1(nc, rp, fc1, 's');
 [bc1z, ac1z] = impinvar(bc1c, ac1c, Fs);
@@ -208,6 +210,7 @@ ylabel('Magnitude')
 saveas(gcf, 'Handel_cheby1_impinvar_fft.jpg')
 audiowrite('Handel_cheby1_impinvar.wav', yc1z, Fs)
 
+Cheby2
 fc2 = Wnc2 * pi * Fs;
 [bc2c, ac2c] = cheby2(nc2, rs, fc2, 's');
 [bc2z, ac2z] = impinvar(bc2c, ac2c, Fs);
@@ -216,10 +219,6 @@ freqz(bc2z, ac2z)
 title('Chebyshev II Impinvar')
 saveas(gcf, 'cheby2_response_impinvar.jpg')
 yc2z = filtfilt(bc2z, ac2z, noisy);
-% figure;
-% stem(n1, yc2z)
-% title('Chebyshev II Filtered Discrete impinvar')
-% saveas(gcf, 'cheby2_filtered_impinvar.jpg')
 c2_erri = mean(abs(y - yc2z) / mean(abs(y)));
 fprintf('Chebyshev II Filter Error using impinvar: %4.4f\n', c2_erri);
 figure;
@@ -236,6 +235,7 @@ ylabel('Magnitude')
 saveas(gcf, 'Handel_cheby2_impinvar_fft.jpg')
 audiowrite('Handel_cheby2_impinvar.wav', yc2, Fs)
 
+% Ellipse
 fe = Wne * pi * Fs;
 [bec, aec] = ellip(ne, rp, rs, fe, 's');
 [bez, aez] = impinvar(bec, aec, Fs);
@@ -244,10 +244,6 @@ freqz(bez, aez)
 title('Ellipse Impinvar')
 saveas(gcf, 'ellipse_response_impinvar.jpg')
 yez = filtfilt(bez, aez, noisy);
-% figure;
-% stem(n1, yez)
-% title('Ellipse Filtered Discrete impinvar')
-% saveas(gcf, 'Handel_ellipse_filtered_impinvar.jpg')
 e_erri = mean(abs(y - yez) / mean(abs(y)));
 fprintf('Ellipse Filter Error using impinvar: %4.4f\n', e_erri);
 figure;
